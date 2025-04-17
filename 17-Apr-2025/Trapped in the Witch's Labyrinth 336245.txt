@@ -1,0 +1,85 @@
+# Problem: Trapped in the Witch's Labyrinth - https://codeforces.com/problemset/problem/2034/C
+
+#include<bits/stdc++.h>
+
+using namespace std;
+
+constexpr int IMPOSSIBLE = -1;
+constexpr int POSSIBLE = 1;
+
+vector<pair<int, int>> drxn = {{-1, 0}, {0, -1}, {1, 0}, {0, 1}};
+
+unordered_map<char, pair<int, int>> direction_map = {
+    {'U', {-1, 0}},
+    {'L', {0, -1}},
+    {'D', {1, 0}},
+    {'R', {0, 1}}
+};
+
+bool inbound(int row, int col, int n, int m) {
+    return row >= 0 && row < n && col >= 0 && col < m;
+}
+
+int dfs(int row, int col, 
+        const vector<vector<char>>& grid, 
+        vector<vector<int>>& visited,
+        int n, int m) {
+    
+    if (!inbound(row, col, n, m)) return IMPOSSIBLE;
+    if (visited[row][col] != 0) return visited[row][col];
+    
+    visited[row][col] = POSSIBLE;
+
+    if (grid[row][col] != '?') {
+        const auto& [dx, dy] = direction_map.at(grid[row][col]);
+        return visited[row][col] = dfs(row + dx, col + dy, grid, visited, n, m);
+    } else {
+        bool result = any_of(drxn.begin(), drxn.end(), [&](const auto& dir) {
+            return dfs(row + dir.first, col + dir.second, grid, visited, n, m) == POSSIBLE;
+        });
+        return visited[row][col] = result ? POSSIBLE : IMPOSSIBLE;
+    }
+}
+
+void solve() {
+    int n, m;
+    cin >> n >> m;
+    
+    vector<vector<char>> grid(n, vector<char>(m));
+    vector<vector<int>> visited(n, vector<int>(m, 0));
+    
+    for_each(grid.begin(), grid.end(), [](auto& row) {
+        string s;
+        cin >> s;
+        transform(s.begin(), s.end(), row.begin(), [](char c) { return c; });
+    });
+
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < m; ++j) {
+            if (!visited[i][j]) {
+                visited[i][j] = dfs(i, j, grid, visited, n, m);
+            }
+        }
+    }
+
+    auto count = accumulate(visited.begin(), visited.end(), 0, 
+        [](int sum, const auto& row) {
+            return sum + count_if(row.begin(), row.end(), 
+                [](int val) { return val != IMPOSSIBLE; });
+        });
+    
+    cout << count << "\n";
+}
+
+int main() {
+    ios_base::sync_with_stdio(0);
+    cin.tie(0);
+
+    int T = 1;
+    cin >> T;
+    
+    while (T--) {
+        solve();
+    }
+    return 0;
+}
