@@ -1,0 +1,33 @@
+# Problem: Continuous Subarrays - https://leetcode.com/problems/continuous-subarrays/
+
+class Solution {
+public:
+    long long continuousSubarrays(vector<int>& nums) {
+        int n=nums.size();
+        long long ans=0;
+        int minEl=nums[0],maxEl=nums[0];
+        int left=0,right=1;
+        for(;right<n;right++){
+            minEl=min(minEl,nums[right]);
+            maxEl=max(maxEl,nums[right]);
+            if(maxEl-minEl>2){
+                int len=right-left;
+                ans+=(1LL*len*(len+1))/2;
+                left=right;
+                minEl=nums[right];
+                maxEl=nums[right];
+                while(abs(nums[right]-nums[left-1])<=2){
+                    minEl=min(minEl,nums[--left]);
+                    maxEl=max(maxEl,nums[left]);
+                }
+                if(left<right){
+                    len=right-left;
+                    ans-=(1LL*len*(len+1))/2;
+                }
+            }
+        }
+        int len=right-left;
+        ans+=(1LL*len*(len+1))/2;
+        return ans;
+    }
+};
