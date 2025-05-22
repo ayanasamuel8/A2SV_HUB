@@ -1,0 +1,49 @@
+# Problem: The Unique Topological Sort - https://basecamp.eolymp.com/en/problems/10652
+
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+    ios_base::sync_with_stdio(0);
+    cin.tie(0);
+    cout.tie(0);
+
+    // example below, replace it with your solution
+    int n, m;
+    cin>>n >> m;
+    unordered_map<int, vector<int>> graph;
+    vector<int>indeg(n,0);
+    for(size_t i = 0; i < m; i++){
+        int u,v;
+        cin >> u >> v;
+        --u;
+        --v;
+        graph[u].push_back(v);
+        indeg[v] += 1;
+    }
+    queue<int> q;
+    for(size_t i = 0; i < n; i++){
+        if (indeg[i] == 0) q.push(i);
+    }
+    int toposorted = 0;
+    bool valid_two_ways = false;
+    while (!q.empty()){
+        int u = q.front();
+        valid_two_ways |= q.size() > 1;
+        q.pop();
+        toposorted++;
+        for (auto&v:graph[u]){
+            indeg[v]--;
+            if(indeg[v] == 0){
+                q.push(v);
+            }
+        }
+    }
+    if(toposorted == n && valid_two_ways){
+        cout<<"NO"<<endl;
+    }else if(toposorted == n){
+        cout<<"YES" << endl;
+    }else{
+        cout<<-1<<endl;
+    }
+}
