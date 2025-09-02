@@ -1,0 +1,29 @@
+# Problem: Dungeon Game - https://leetcode.com/problems/dungeon-game/
+
+class Solution {
+public:
+
+    vector<vector<int>> dp;
+
+    int minimum(vector<vector<int>>& dungeon, int row, int col, int n, int m){
+        if (row >= n or col >= m){
+            return INT_MIN + 500;
+        }
+        if(row == n - 1 and col == m - 1){
+            return dungeon[row][col] < 0? dungeon[row][col] : 0;
+        }
+        if (dp[row][col] != INT_MAX){
+            return dp[row][col];
+        }
+        int right = dungeon[row][col] + minimum(dungeon, row, col + 1, n, m);
+        int down = dungeon[row][col] + minimum(dungeon, row + 1, col, n, m);
+        int max_ = max(right, down);
+        return dp[row][col] = min(dungeon[row][col], min(max_, 0));
+    }
+
+    int calculateMinimumHP(vector<vector<int>>& dungeon) {
+        int n = dungeon.size(), m = dungeon[0].size();
+        dp.assign(n, vector<int>(m, INT_MAX));
+        return abs(minimum(dungeon, 0, 0, n, m)) + 1;
+    }
+};
