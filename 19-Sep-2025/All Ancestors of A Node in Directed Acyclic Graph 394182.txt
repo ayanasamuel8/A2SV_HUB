@@ -1,0 +1,39 @@
+# Problem: All Ancestors of A Node in Directed Acyclic Graph - https://leetcode.com/problems/all-ancestors-of-a-node-in-a-directed-acyclic-graph/
+
+#include <ranges>
+class Solution {
+public:
+    vector<vector<int>> getAncestors(int n, vector<vector<int>>& edges) {
+        unordered_map<int, vector<int>> graph;
+        vector<int> indegree(n, 0);
+        vector<set<int>> ancestors(n);
+        vector<vector<int>> ans;
+        for(auto& edge: edges){
+            int u = edge[0], v = edge[1];
+            graph[u].push_back(v);
+            indegree[v]++;
+        }
+
+        queue<int> q;
+
+        for (auto [i, val]: std::views::enumerate(indegree)) if(val == 0) q.push(i);
+
+        while(!q.empty()){
+            int u = q.front();
+            q.pop();
+            for(auto v: graph[u]){
+                indegree[v]--;
+                if(indegree[v] == 0) q.push(v);
+                ancestors[v].insert(u);
+                ancestors[v].insert(ancestors[u].begin(), ancestors[u].end());
+            }
+        }
+        
+        ans.resize(ancestors.size());
+        for(size_t i = 0; i < n; i++){
+            ans[i].assign(ancestors[i].begin(), ancestors[i].end());
+        }
+
+        return ans;
+    }
+};
