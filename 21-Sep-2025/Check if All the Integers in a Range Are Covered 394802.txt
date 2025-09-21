@@ -1,0 +1,19 @@
+# Problem: Check if All the Integers in a Range Are Covered - https://leetcode.com/problems/check-if-all-the-integers-in-a-range-are-covered/description/
+
+class Solution {
+public:
+    bool isCovered(vector<vector<int>>& ranges, int left, int right) {
+        vector<int>sweep(51, 0);
+        for(auto&it : ranges){
+            int left = it[0] - 1, right = it[1];
+            sweep[left]++;
+            sweep[right]--;
+        }
+        for(size_t i = 1; i < 51; i++)
+            sweep[i] += sweep[i - 1];
+        for(size_t i = left - 1; i < right; i++){
+            if (sweep[i] == 0) return false;
+        }
+        return true;
+    }
+};
