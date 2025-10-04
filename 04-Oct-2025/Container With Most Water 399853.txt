@@ -1,0 +1,24 @@
+# Problem: Container With Most Water - https://leetcode.com/problems/container-with-most-water/
+
+class Solution {
+public:
+    int maxArea(vector<int>& arr) {
+        int n = arr.size();
+        int start = 0, end = n - 1, minimum;
+        int area, areamax = 0;
+        while (start < end) {
+            if (arr[start] > arr[end]) minimum = arr[end];
+            else minimum = arr[start];
+            
+            area = minimum * (end - start);
+            if (minimum == arr[start]) {
+                start++;
+            }
+            if (minimum == arr[end]) {
+                end--;
+            }
+            if (areamax < area) areamax = area;
+        }
+        return areamax;
+    }
+};
