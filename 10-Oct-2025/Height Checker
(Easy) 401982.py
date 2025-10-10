@@ -1,0 +1,6 @@
+# Problem: Height Checker
+(Easy) - https://leetcode.com/problems/height-checker/
+
+class Solution:
+    def heightChecker(self, heights: List[int]) -> int:
+        return sum(i != j for (i, j) in zip(heights, sorted(heights)))
